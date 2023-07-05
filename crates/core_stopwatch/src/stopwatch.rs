@@ -1,19 +1,34 @@
-use crate::{now_provider::NowProvider, ChronoNow, TestProvider, Timer};
+use crate::chrono_duration_serde;
+use crate::{now_provider::NowProvider, ChronoNow, Timer};
 use chrono::{DateTime, Duration, Utc};
+use serde::{Deserialize, Serialize};
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Stopwatch<T> {
     title: Option<String>,
     started: DateTime<Utc>,
-    elasped_since_last_pause: Duration,
+    #[serde(with = "chrono_duration_serde")]
+    elasped_since_last_pause: chrono::Duration,
     is_paused: bool,
     provider_for_now: T,
 }
 
 impl Stopwatch<ChronoNow> {
-    pub fn now(title: Option<String>) -> Self {
+    pub fn now() -> Self {
+        let now: ChronoNow = Default::default();
+        Self {
+            title: None,
+            started: now.now(),
+            elasped_since_last_pause: Duration::zero(),
+            is_paused: true,
+            provider_for_now: now,
+        }
+    }
+
+    pub fn from_on(title: Option<String>, started: DateTime<Utc>) -> Self {
         let now: ChronoNow = Default::default();
         Self {
             title,
-            started: now.now(),
+            started,
             elasped_since_last_pause: Duration::zero(),
             is_paused: true,
             provider_for_now: now,
@@ -21,16 +36,26 @@ impl Stopwatch<ChronoNow> {
     }
 }
 
+#[cfg(test)]
+use crate::now_provider::test_utility::TestProvider;
+
+#[cfg(test)]
 impl Stopwatch<TestProvider> {
-    fn started_from(provider: TestProvider, title: Option<String>, started: DateTime<Utc>) -> Self {
-        let now: ChronoNow = Default::default();
+    pub(crate) fn started_from(provider: TestProvider, started: DateTime<Utc>) -> Self {
         Self {
-            title,
+            title: None,
             started,
             elasped_since_last_pause: Duration::zero(),
             is_paused: true,
             provider_for_now: provider,
         }
+    }
+}
+
+impl<T> Stopwatch<T> {
+    fn with_name(&mut self, name: Option<String>) -> &mut Self {
+        self.title = name;
+        self
     }
 }
 
@@ -62,9 +87,11 @@ where
         todo!()
     }
 }
+
 #[cfg(test)]
 mod testing {
-    use crate::{Stopwatch, Timer};
+    use crate::now_provider::test_utility::TestProvider;
+    use crate::Stopwatch;
     use chrono::TimeZone;
     use std::{cell::RefCell, rc::Rc};
 
@@ -78,11 +105,7 @@ mod testing {
         let mock = TestProvider::new(given_time.clone());
 
         // Act
-        let actual = Stopwatch::started_from(
-            mock,
-            Some("After_2_hours".to_owned()),
-            given_time.borrow().clone(),
-        );
+        let actual = Stopwatch::started_from(mock, given_time.borrow().clone());
 
         // Assert
         assert_eq!(
