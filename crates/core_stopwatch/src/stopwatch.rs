@@ -1,14 +1,17 @@
 use crate::chrono_duration_serde;
 use crate::{now_provider::NowProvider, ChronoNow, Timer};
 use chrono::{DateTime, Duration, Utc};
+use derive_getters::Getters;
 use serde::{Deserialize, Serialize};
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Stopwatch<T> {
+#[derive(Debug, Serialize, Deserialize, Getters)]
+pub struct Stopwatch<T = ChronoNow> {
     title: Option<String>,
+    #[getter(skip)]
     started: DateTime<Utc>,
     #[serde(with = "chrono_duration_serde")]
     elasped_since_last_pause: chrono::Duration,
     is_paused: bool,
+    #[getter(skip)]
     provider_for_now: T,
 }
 
@@ -53,7 +56,7 @@ impl Stopwatch<TestProvider> {
 }
 
 impl<T> Stopwatch<T> {
-    fn with_name(&mut self, name: Option<String>) -> &mut Self {
+    pub fn with_name(&mut self, name: Option<String>) -> &mut Self {
         self.title = name;
         self
     }

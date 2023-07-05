@@ -14,7 +14,7 @@ pub fn deserialize<'de, D>(d: D) -> Result<Duration, D::Error>
 where
     D: de::Deserializer<'de>,
 {
-    d.deserialize_str(DurationDeserilizer)
+    d.deserialize_i64(DurationDeserilizer)
 }
 
 struct DurationDeserilizer;
@@ -22,16 +22,13 @@ impl<'de> de::Visitor<'de> for DurationDeserilizer {
     type Value = Duration;
 
     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(formatter, "a datetime string")
+        write!(formatter, "Not second number")
     }
 
-    fn visit_str<E>(self, value: &str) -> Result<Duration, E>
+    fn visit_i64<E>(self, value: i64) -> Result<Duration, E>
     where
         E: de::Error,
     {
-        let number: i64 = value
-            .parse()
-            .map_err(|_| E::custom(format!("{} is a valid number for seconds", value)))?;
-        Ok(chrono::Duration::seconds(number))
+        Ok(chrono::Duration::seconds(value))
     }
 }
