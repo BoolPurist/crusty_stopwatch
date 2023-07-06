@@ -2,10 +2,15 @@ use std::{fs, path::PathBuf};
 
 use crate::AppResult;
 
+const ENV_DATA: &str = ".env";
+const PATH: &str = "data.ron";
+const PROJECT_ROOT: &str = env!("CARGO_MANIFEST_DIR");
+const DEV_FOLDER_END: &str = ".date_during_dev";
+
 pub fn get_path_to_data() -> AppResult<PathBuf> {
     if cfg!(debug_assertions) {
-        let folder_path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(".date_during_dev");
-        let data_path = folder_path.join("data.ron");
+        let folder_path = PathBuf::from(PROJECT_ROOT).join(DEV_FOLDER_END);
+        let data_path = folder_path.join(PATH);
 
         if !folder_path.exists() {
             fs::create_dir_all(&folder_path)?;
@@ -30,7 +35,7 @@ pub fn get_path_to_data() -> AppResult<PathBuf> {
 
 pub fn handle_env_file() {
     if cfg!(debug_assertions) {
-        let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(".env");
+        let path = PathBuf::from(PROJECT_ROOT).join(ENV_DATA);
         dotenv::from_path(path.as_path()).expect("Unable to read .env file");
     }
 }

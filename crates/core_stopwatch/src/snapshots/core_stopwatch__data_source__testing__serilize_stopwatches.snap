@@ -1,5 +1,5 @@
 ---
-source: crates/core_stopwatch/src/lib.rs
+source: crates/core_stopwatch/src/data_source.rs
 expression: output
 ---
 (
