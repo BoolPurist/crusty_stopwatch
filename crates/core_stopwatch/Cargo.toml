@@ -12,6 +12,10 @@ derive-new = "0.5.9"
 ron = "0.8.0"
 serde = { version = "1.0.166", features = ["derive"] }
 thiserror = "1.0.41"
+dotenv = "0.15.0"
+anyhow = "1.0.71"
+env_logger = "0.10.0"
+log = "0.4.19"
 
 [dev-dependencies]
 insta = "1.30.0"

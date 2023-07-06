@@ -1,12 +1,11 @@
 [package]
-name = "cli_stopwatch"
+name = "tui_stopwatch"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clap = { version = "4.3.10", features = ["derive"] }
+cursive = "0.20.0"
 core_stopwatch = { path = "../core_stopwatch" }
-dotenv = "0.15.0"
-prettytable = "0.10.0"
+once_cell = "1.18.0"

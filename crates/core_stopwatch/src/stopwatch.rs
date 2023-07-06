@@ -3,8 +3,9 @@ use crate::{now_provider::NowProvider, ChronoNow, Timer};
 use chrono::{DateTime, Duration, Utc};
 use derive_getters::Getters;
 use serde::{Deserialize, Serialize};
-#[derive(Debug, Serialize, Deserialize, Getters)]
+#[derive(Debug, Serialize, Deserialize, Getters, Clone)]
 pub struct Stopwatch<T = ChronoNow> {
+    #[getter(skip)]
     title: Option<String>,
     #[getter(skip)]
     started: DateTime<Utc>,
@@ -16,6 +17,10 @@ pub struct Stopwatch<T = ChronoNow> {
 }
 
 impl Stopwatch<ChronoNow> {
+    pub fn title(&self) -> Option<&str> {
+        self.title.as_deref()
+    }
+
     pub fn now() -> Self {
         let now: ChronoNow = Default::default();
         Self {

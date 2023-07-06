@@ -1,0 +1,3 @@
+[alias]
+tui = "run --package tui_stopwatch --"
+cli = "run --package cli_stopwatch --"

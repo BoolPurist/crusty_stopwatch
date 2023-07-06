@@ -5,7 +5,7 @@ pub trait NowProvider {
     fn now(&self) -> DateTime<Utc>;
 }
 
-#[derive(Default, Debug, Serialize, Deserialize)]
+#[derive(Default, Debug, Serialize, Deserialize, Clone)]
 pub struct ChronoNow;
 
 impl NowProvider for ChronoNow {

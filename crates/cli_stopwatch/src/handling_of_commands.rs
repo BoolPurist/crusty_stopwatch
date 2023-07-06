@@ -1,15 +1,17 @@
+use core_stopwatch::prelude::*;
 use core_stopwatch::{
     data_source::{self, DataErrorTimers},
-    Stopwatch,
+    file_access, Stopwatch,
 };
 
+use crate::PROJECT_ROOT;
 use crate::{
     cli_parse::{CliCommands, CliSubCommands},
-    file_access, tables, AppResult,
+    tables, AppResult,
 };
 
 pub fn handle_command(args: CliCommands) -> AppResult<String> {
-    let path = file_access::get_path_to_data()?;
+    let path = file_access::get_path_to_data(PROJECT_ROOT)?;
     let mut loaded_timers = data_source::load_timers_from(&path).or_else(|error| match error {
         DataErrorTimers::Io(io_error) => Err(io_error),
         DataErrorTimers::Format(error) => {

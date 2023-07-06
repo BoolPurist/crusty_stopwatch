@@ -1,15 +1,14 @@
 use std::{fs, path::PathBuf};
 
-use crate::AppResult;
+use crate::prelude::*;
 
 const ENV_DATA: &str = ".env";
 const PATH: &str = "data.ron";
-const PROJECT_ROOT: &str = env!("CARGO_MANIFEST_DIR");
 const DEV_FOLDER_END: &str = ".date_during_dev";
 
-pub fn get_path_to_data() -> AppResult<PathBuf> {
+pub fn get_path_to_data(project_root: &str) -> AppResult<PathBuf> {
     if cfg!(debug_assertions) {
-        let folder_path = PathBuf::from(PROJECT_ROOT).join(DEV_FOLDER_END);
+        let folder_path = PathBuf::from(project_root).join(DEV_FOLDER_END);
         let data_path = folder_path.join(PATH);
 
         if !folder_path.exists() {
@@ -33,9 +32,9 @@ pub fn get_path_to_data() -> AppResult<PathBuf> {
     }
 }
 
-pub fn handle_env_file() {
+pub fn handle_env_file(project_root: &str) {
     if cfg!(debug_assertions) {
-        let path = PathBuf::from(PROJECT_ROOT).join(ENV_DATA);
+        let path = PathBuf::from(project_root).join(ENV_DATA);
         dotenv::from_path(path.as_path()).expect("Unable to read .env file");
     }
 }

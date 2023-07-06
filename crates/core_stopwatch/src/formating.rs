@@ -1,4 +1,4 @@
-use chrono::{DateTime, Datelike, Duration, TimeZone, Timelike};
+use chrono::{DateTime, Datelike, Duration, Local, TimeZone, Timelike, Utc};
 
 pub fn date_to_row<T: TimeZone>(date: DateTime<T>) -> String {
     format!(
@@ -10,6 +10,11 @@ pub fn date_to_row<T: TimeZone>(date: DateTime<T>) -> String {
         date.minute(),
         date.second(),
     )
+}
+
+pub fn utc_date_to_row(date: DateTime<Utc>) -> String {
+    let date: DateTime<Local> = date.with_timezone(&Local);
+    date_to_row(date)
 }
 
 pub fn duration_to_row(to_string: Duration) -> String {

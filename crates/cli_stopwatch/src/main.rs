@@ -1,20 +1,16 @@
-#[macro_use]
-extern crate log;
-
-type CliError = anyhow::Error;
-type AppResult<T = ()> = Result<T, anyhow::Error>;
-
-mod file_access;
-mod handling_of_commands;
-
 mod cli_parse;
+mod handling_of_commands;
 mod tables;
 
 use clap::Parser;
+use core_stopwatch::file_access;
+use core_stopwatch::prelude::*;
 use std::process::ExitCode;
 
+pub const PROJECT_ROOT: &str = env!("CARGO_MANIFEST_DIR");
+
 fn main() -> ExitCode {
-    file_access::handle_env_file();
+    file_access::handle_env_file(PROJECT_ROOT);
 
     env_logger::init();
 
@@ -31,6 +27,6 @@ fn main() -> ExitCode {
     ExitCode::SUCCESS
 }
 
-pub fn report_error(error: CliError) {
+pub fn report_error(error: AppError) {
     eprintln!("{:?}", error);
 }

@@ -8,7 +8,7 @@ pub fn create_table_from_stopwatches(stop_watches: impl IntoIterator<Item = Stop
     for next in stop_watches {
         let title = next.title().clone().unwrap_or_default();
         let elapsed = formating::duration_to_row(next.elapsed());
-        let started = formating::date_to_row(next.started());
+        let started = formating::utc_date_to_row(next.started());
         table.add_row(row![title, elapsed, started]);
     }
 
